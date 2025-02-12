@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worky - Платформа профессионального развития</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #40E0D0 0%, #4169E1 100%);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+        .profession-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .profession-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .platform-btn {
+            transition: all 0.3s ease;
+        }
+
+        .platform-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .profession-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- Навигация -->
+    <nav class="gradient-bg text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="img/logo.png" alt="Worky" class="h-8 w-8">
+                <span class="text-xl font-bold">Worky</span>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="hover:text-gray-200">Главная</a>
+                <a href="#" class="hover:text-gray-200">О нас</a>
+                <a href="#" class="hover:text-gray-200">Поддержка</a>
+                <button class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50">
+                    Войти
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Главный баннер -->
+    <header class="gradient-bg text-white py-20">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl font-bold mb-6">Выбери свое будущее</h1>
+            <p class="text-xl mb-8">Исследуй востребованные профессии в Казахстане</p>
+            <div class="flex justify-center space-x-4">
+                <button class="bg-white text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50">
+                    Начать тестирование
+                </button>
+                <button
+                    class="border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-blue-600">
+                    Смотреть статистику
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Секция статистики -->
+    <section class="py-16 container mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">Статистика востребованных профессий</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <canvas id="demandChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <canvas id="salaryChart"></canvas>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg" style="height: 400px;">
+                <canvas id="lowDemandChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg" style="height: 400px;">
+                <canvas id="highDemandChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Обновленная секция профессий -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Доступные симуляции</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="profession-card p-6">
+                    <img src="img/buhgalter.png" alt="Бухгалтер" class="profession-image">
+                    <h3 class="text-xl font-bold mb-4">Бухгалтер</h3>
+                    <p class="text-gray-600 mb-4">Изучите основы бухгалтерского учета и финансовой отчетности через
+                        практические симуляции</p>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full"
+                        data-profession="бухгалтер"
+                        data-description="Бухгалтер ведет финансовый учет, составляет отчетность и работает с документацией. Средняя зарплата: 250,000 тг. Количество вакансий: 92,000">
+                        Начать симуляцию
+                    </button>
+                </div>
+                <div class="profession-card p-6">
+                    <img src="img/doctor.png" alt="Медицинский работник" class="profession-image">
+                    <h3 class="text-xl font-bold mb-4">Медицинский работник</h3>
+                    <p class="text-gray-600 mb-4">Практикуйте навыки медицинского ухода в виртуальной среде</p>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full"
+                        data-profession="медработник"
+                        data-description="Медицинский работник оказывает помощь пациентам, выполняет назначения врача. Средняя зарплата: 180,000 тг. Количество вакансий: 40,000">
+                        Начать симуляцию
+                    </button>
+                </div>
+                <div class="profession-card p-6">
+                    <img src="img/teacher.png" alt="Учитель" class="profession-image">
+                    <h3 class="text-xl font-bold mb-4">Учитель</h3>
+                    <p class="text-gray-600 mb-4">Попробуйте себя в роли преподавателя в виртуальном классе</p>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full"
+                        data-profession="учитель"
+                        data-description="Учитель проводит занятия, разрабатывает учебные материалы. Средняя зарплата: 200,000 тг. Количество вакансий: 31,000">
+                        Начать симуляцию
+                    </button>
+                </div>
+                <div class="profession-card p-6">
+                    <img src="img/security.png" alt="Охранник" class="profession-image">
+                    <h3 class="text-xl font-bold mb-4">Охранник</h3>
+                    <p class="text-gray-600 mb-4">Освойте навыки обеспечения безопасности и охраны объектов</p>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full"
+                        data-profession="охранник"
+                        data-description="Охранник обеспечивает безопасность объектов и людей. Средняя зарплата: 120,000 тг. Количество вакансий: 77,800">
+                        Начать симуляцию
+                    </button>
+                </div>
+                <div class="profession-card p-6">
+                    <img src="img/salesman.png" alt="Продавец" class="profession-image">
+                    <h3 class="text-xl font-bold mb-4">Продавец</h3>
+                    <p class="text-gray-600 mb-4">Изучите основы торговли и работы с клиентами</p>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full"
+                        data-profession="продавец"
+                        data-description="Продавец консультирует покупателей и осуществляет продажи. Средняя зарплата: 150,000 тг. Количество вакансий: 70,200">
+                        Начать симуляцию
+                    </button>
+                </div>
+                <div class="profession-card p-6">
+                    <img src="img/driver.png" alt="Водитель" class="profession-image">
+                    <h3 class="text-xl font-bold mb-4">Водитель</h3>
+                    <p class="text-gray-600 mb-4">Практикуйте навыки вождения в различных условиях</p>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full"
+                        data-profession="водитель"
+                        data-description="Водитель осуществляет перевозку пассажиров или грузов. Средняя зарплата: 200,000 тг. Количество вакансий: 45,100">
+                        Начать симуляцию
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Новая секция с виджетами -->
+    <section class="py-16 container mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">Вакансии и стажировки</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- HH.kz виджет -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Вакансии на HH.kz</h3>
+                <div class="aspect-video">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/79/HeadHunter_logo.png"
+                        class="w-full h-full rounded-lg" frameborder="0">
+                </div>
+                <a href="https://astana.hh.kz/" target="_blank"
+                    class="mt-4 text-blue-600 hover:text-blue-800 block text-center">
+                    Перейти на HH.kz
+                </a>
+            </div>
+
+            <!-- Astana Hub виджет -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Вакансии Astana Hub</h3>
+                <div class="aspect-video">
+                    <iframe src="https://astanahub.com/ru/vacancy" class="w-full h-full rounded-lg" frameborder="0">
+                    </iframe>
+                </div>
+                <a href="https://astanahub.com/ru/" target="_blank"
+                    class="mt-4 text-blue-600 hover:text-blue-800 block text-center">
+                    Перейти на Astana Hub
+                </a>
+            </div>
+
+            <!-- Jinaq виджет -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Стажировки для школьников</h3>
+                <div class="aspect-video">
+                    <iframe src="https://jinaq.onrender.com/" class="w-full h-full rounded-lg" frameborder="0">
+                    </iframe>
+                </div>
+                <a href="https://jinaq.onrender.com/" target="_blank"
+                    class="mt-4 text-blue-600 hover:text-blue-800 block text-center">
+                    Перейти на Jinaq
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Добавляем секцию для обсуждения перед футером -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">Обсудите профессии с единомышленниками</h2>
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <p class="text-gray-600 mb-6">Задавайте вопросы, делитесь опытом и узнавайте больше о профессиях</p>
+                <a href="https://t.me/workykz" target="_blank"
+                    class="inline-flex items-center space-x-2 bg-[#0088cc] text-white px-6 py-3 rounded-lg hover:bg-[#0077b5] transition-colors">
+                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.9-.903-.836-.687-1.308-1.115-2.121-1.787-.939-.771-.331-1.196.204-1.889.14-.18 2.561-2.454 2.609-2.663.006-.026.012-.125-.048-.177s-.149-.01-.213.015c-.092.035-1.552 1.039-4.38 3.012-.414.3-.79.447-1.127.439-.37-.009-1.084-.225-1.613-.41-.658-.232-1.183-.349-1.138-.738.023-.203.321-.41.893-.62 3.498-1.524 5.83-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.121.1.153.234.166.333.032.236-.043.673-.043.673z" />
+                    </svg>
+                    <span>Присоединиться к чату</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Обновленное модальное окно -->
+    <div id="professionModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4" id="modalTitle">Название профессии</h2>
+            <p class="text-gray-600 mb-6" id="modalDescription">Описание профессии</p>
+            <div class="flex flex-col items-center space-y-4">
+                <button
+                    class="platform-btn bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 w-full flex items-center justify-center space-x-2"
+                    onclick="openSimulation('roblox')">
+                    <img src="img/buhgalter.png" alt="Roblox" class="h-6 w-6">
+                    <span>Открыть в Roblox</span>
+                </button>
+                <a href="https://t.me/workykz" target="_blank"
+                    class="platform-btn bg-[#0088cc] text-white px-6 py-3 rounded-lg hover:bg-[#0077b5] w-full flex items-center justify-center space-x-2">
+                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.9-.903-.836-.687-1.308-1.115-2.121-1.787-.939-.771-.331-1.196.204-1.889.14-.18 2.561-2.454 2.609-2.663.006-.026.012-.125-.048-.177s-.149-.01-.213.015c-.092.035-1.552 1.039-4.38 3.012-.414.3-.79.447-1.127.439-.37-.009-1.084-.225-1.613-.41-.658-.232-1.183-.349-1.138-.738.023-.203.321-.41.893-.62 3.498-1.524 5.83-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.121.1.153.234.166.333.032.236-.043.673-.043.673z" />
+                    </svg>
+                    <span>Обсудить в Telegram</span>
+                </a>
+            </div>
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700" onclick="closeModal()">
+                ✕
+            </button>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="mt-auto gradient-bg text-white py-8">
+        <div class="container mx-auto">
+            <div class="text-center">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold mb-2">Skillset of Dragon</h3>
+                    <p class="text-gray-200">Создаем будущее профессионального образования</p>
+                </div>
+                <div class="flex justify-center space-x-6 mb-4">
+                    <a href="#" class="hover:text-gray-200">О команде</a>
+                    <a href="#" class="hover:text-gray-200">Контакты</a>
+                    <a href="#" class="hover:text-gray-200">Условия использования</a>
+                </div>
+                <div class="text-sm text-gray-300">
+                    © 2025 Skillset of Dragon. Все права защищены.
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
